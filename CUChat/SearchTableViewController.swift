@@ -16,6 +16,7 @@ class SearchTableViewController: UITableViewController {
     var session:String!
     var swiftyJsonVar = JSON("")
     var listName = Array<String>()
+    private var contacts = [Contact]()
     
     @IBOutlet var nameEditext: UITextField!
     private func fetchContact(){
@@ -28,7 +29,7 @@ class SearchTableViewController: UITableViewController {
             let url : String = "https://mis.cp.eng.chula.ac.th/mobile/service.php?q=api%2FsearchUser"
             let param : [String: String] = [
                 
-                "sessionid" : session,
+                "sessionid" : contacts[0].session,
                 "keyword" : nameEditext.text!
                 
             ]
@@ -48,7 +49,9 @@ class SearchTableViewController: UITableViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
+        contacts = CuDatabase.instance.getContacts()
         
+       
        
     }
 
@@ -85,7 +88,7 @@ class SearchTableViewController: UITableViewController {
             let url : String = "https://mis.cp.eng.chula.ac.th/mobile/service.php?q=api%2FaddContact"
             let param : [String: String] = [
                 
-                "sessionid" : session,
+                "sessionid" : contacts[0].session,
                 "username" : listName[indexPath.row]
                 
             ]
@@ -96,7 +99,14 @@ class SearchTableViewController: UITableViewController {
                 
             }
             
-    }
+        }
+    
+        
+        //Calls this function when the tap is recognized.
+        func dismissKeyboard() {
+            //Causes the view (or one of its embedded text fields) to resign the first responder status.
+            view.endEditing(true)
+        }
     }
     
 }

@@ -14,15 +14,16 @@ class TableViewController: UITableViewController {
     
     var user:String?
     var session:String?
+    var index:Int?
     var swiftyJsonVar = JSON("")
     var listName = Array<String>()
-   
+    private var contacts = [Contact]()
     
     private func fetchContact(){
         let url : String = "https://mis.cp.eng.chula.ac.th/mobile/service.php?q=api%2FgetContact"
         let param : [String: String] = [
             
-            "sessionid" : session!
+            "sessionid" : contacts[0].session
            
         ]
         Alamofire.request(url,method : .post, parameters: param).responseJSON { response in
@@ -38,6 +39,7 @@ class TableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        contacts = CuDatabase.instance.getContacts()
         fetchContact()
         
     }
@@ -76,16 +78,20 @@ class TableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if (indexPath.section == 0){
-            
-            
+            index = indexPath.row
+            performSegue(withIdentifier: "chatIdentifier", sender: self)
         }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "searchIdentifier") {
             var nextScene = segue.destination as? SearchTableViewController
-            nextScene?.user = user
-            nextScene?.session = session
+           // nextScene?.user = user
+            //nextScene?.session = session
+        }
+        if (segue.identifier == "chatIdentifier"){
+            var nextScene = segue.destination as? ChatViewController
+            nextScene?.opponent = listName[index!]
         }
     }
     
